@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -14,7 +14,7 @@ public class LightSource : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         foreach (var lightcollider in lightcolliders) {
             if (lightcollider.castsShadow) {
                 lightcollider.UpdateMesh(GetMeshFromLightCollider(lightcollider));
@@ -22,22 +22,60 @@ public class LightSource : MonoBehaviour {
         }
     }
 
+    // Returns a mesh for the shadow cast by LightCollider from this light source
     Mesh GetMeshFromLightCollider(LightCollider lc) {
         List<Vector3> lcVerts = lc.GetWorldVertices();
 
         List<Vector3> newVerts = new List<Vector3>();
 
+        var color_i = 0;
+
         foreach (var v in lcVerts) {
             Ray ray = new Ray(transform.position, (v - transform.position));
-            List<RaycastHit> hits = SortAndUnique(Physics.RaycastAll(ray));
+            List<RaycastHit> hits = SortAndUniqueHits(Physics.RaycastAll(ray));
 
-            RaycastHit bounce;
-            Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
-
-            if (hits.Count > 1 && hits[0].point == v && hits[0].point == bounce.point) {
-                newVerts.Add(hits[0].point);
-                newVerts.Add(hits[1].point);
+            foreach (var hit in hits) {
+            	Debug.DrawRay(transform.position, hit.point - transform.position, DebugColor(color_i));
             }
+
+            if (hits.Count > 1) {
+
+            	//Find the first raycast hit that is actually on the lightcollider
+	            RaycastHit firstHitOnObject = hits[0];
+	            RaycastHit endHit = hits[1];
+	            for (var hit_i = 0; hit_i < hits.Count; hit_i++) {
+					if (hits[hit_i].collider == lc.GetComponent<Collider>()) {
+						firstHitOnObject = hits[hit_i];
+						endHit = hits[hit_i+1];
+					}
+	            }
+/*
+            	//"Bounce" the ray back to check if it finds the same point. This ensures that the ray hit an exterior
+            	//vertex of the lightcollider, removing troublesome interior points for the shadow mesh
+            	Ray bounceRay = new Ray(endHit.point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)));
+            	//Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
+            	List<RaycastHit> bounceHits = SortAndUniqueHits(Physics.RaycastAll(bounceRay));
+
+
+	            bool bounceHitIsFirstHit = false;
+	            foreach (var bhit in bounceHits) {
+	            	if (bhit.point == firstHitOnObject.point) {
+	            		bounceHitIsFirstHit = true;
+	            		break;
+	            	}
+	            }*/
+
+	            //if (hits.Count > 1 && hits[0].point == v && hits[0].point == bounce.point) {
+	            // if (hits.Count > 1 && hits[0].point == v) {
+	            //     newVerts.Add(hits[0].point);
+	            //     newVerts.Add(hits[1].point);
+	            // }
+	            if (firstHitOnObject.point == v) {
+	                newVerts.Add(firstHitOnObject.point);
+	                newVerts.Add(endHit.point);
+	            }
+	        }
+            color_i++;
         }
 
         Mesh mesh = new Mesh();
@@ -49,7 +87,8 @@ public class LightSource : MonoBehaviour {
         return mesh;
     }
 
-    List<RaycastHit> SortAndUnique(RaycastHit[] array) {
+    //Sort the hits in order of distance (ascending) and remove duplicates
+    List<RaycastHit> SortAndUniqueHits(RaycastHit[] array) {
 		List<RaycastHit> list = new List<RaycastHit>();
         HashSet<Vector3> vectors = new HashSet<Vector3>();
 		foreach (var hit in array) {
@@ -65,40 +104,31 @@ public class LightSource : MonoBehaviour {
 	}
 
     //Takes a list of verts, where each sequential pair of vertices forms an edge. Projecting to the plane, sorts the pairs
-    //in order of their angle. Uses the first point
+    //in order of their angle. Uses the first point of each pair.
     List<Vector3> SortEdgesRadially(Vector3 origin, Vector3 normal, List<Vector3> verts) {
         double[] angles = new double[verts.Count / 2];
 
-        List<Color> debugColors = new List<Color>();
-        while (debugColors.Count < verts.Count) {
-            debugColors.Add(Color.red);
-            debugColors.Add(Color.yellow);
-            debugColors.Add(Color.green);
-            debugColors.Add(Color.cyan);
-            debugColors.Add(Color.blue);
-            debugColors.Add(Color.magenta);
-            debugColors.Add(Color.white);
-            debugColors.Add(Color.black);
-        }
-
-        // Project the corners of the object onto the plane created by normal, and populate the angles array with their 2d angles on the plane
+        // Project the corners of the object onto the plane created by normal, and 
+        // populate the angles array with their 2d angles on the plane
         Vector3 firstProj = verts[0] - origin - Vector3.Project(verts[0] - origin, normal);
-        Vector3 leftHand = Vector3.Cross(firstProj, normal);
+
+        //Since Vector3.angle always returns the acute angle, we take the dot product of the projected vector
+        // with leftHand to tell if the angle measurement should've taken the long way araound
+        Vector3 leftHand = Vector3.Cross(firstProj, normal); 
+
         Debug.DrawRay(origin, normal, Color.white);
         Debug.DrawRay(origin, firstProj*3, Color.black);
         Debug.DrawRay(origin, leftHand * 3, Color.black);
+
         for (var i = 0; i < verts.Count; i += 2) {
             Vector3 projVector = verts[i] - origin - Vector3.Project(verts[i] - origin, normal);
             double angle = Vector3.Angle(firstProj, projVector);
-            //double angle = Math.Asin(Vector3.Dot(firstProj, projVector) / (firstProj.magnitude * projVector.magnitude));
             if (Vector3.Dot(leftHand, projVector) < 0) {
                 angle = 360 - angle;
             }
-            //Debug.Log(debugColors[i / 2].ToString() + angle.ToString());
 
             angles[i / 2] = angle;
-            //angles[i / 2] = Math.Atan((projVector.y + origin.y) / (projVector.x + origin.x)) * 180 / Math.PI + 90;
-            Debug.DrawRay(origin, projVector, debugColors[i / 2]);
+            Debug.DrawRay(origin, projVector, DebugColor(i / 2));
         }
         //We now have a list of angles corresponding to verts
 
@@ -110,20 +140,38 @@ public class LightSource : MonoBehaviour {
             .ToList();
         List<int> sortedIndices = sortedAngles.Select(x => x.Value).ToList();
 
+        // Populate the sorted list of vertices
         List<Vector3> newList = new List<Vector3>();
         foreach (var i in sortedIndices) {
             newList.Add(verts[2*i]);
             newList.Add(verts[2*i+1]);
-            Debug.DrawRay(verts[2*i], verts[2*i + 1] - verts[2*i], debugColors[i]);
-        }
-
-        
-        for (var i = 0; i < newList.Count; i += 2) {
-            //Debug.DrawRay(newList[i], newList[i + 1] - newList[i], debugColors[i/2]);
+            Debug.DrawRay(verts[2*i], verts[2*i + 1] - verts[2*i], DebugColor(i));
         }
 
         return newList;
     }
+
+    //Generates a list of integers following the following pattern:
+    // 0, 1, 2,   2, 1, 3,   2, 3, 4,   4, 3, 5   ...
+    // This is necessary to get the tri normals all facing the right direction
+    int[] GenerateTriangles(int listLength) {
+        int[] anticlockwise = new int[] { 1, 0, 2 };
+        int[] tris = new int[listLength * 3];
+        for (var i = 0; i < listLength; i++) {
+            for (var j = 0; j < 3; j++) {
+                var adder = 0;
+                if (i % 2 == 0) {
+                    adder = j;
+                } else {
+                    adder = anticlockwise[j];
+                }
+                tris[3 * i + j] = (i + adder) % listLength;
+            }
+        }
+        return tris;
+    }
+
+
 
     void PrintHitPoints(IEnumerable<RaycastHit> list) {
         string sconstructor = "";
@@ -143,23 +191,20 @@ public class LightSource : MonoBehaviour {
         Debug.Log(sconstructor);
     }
 
-    //Generates a list of integers following the following pattern:
-    // 0, 1, 2,   2, 1, 3,   2, 3, 4,   4, 3, 5   ...
-    int[] GenerateTriangles(int listLength) {
-        int[] anticlockwise = new int[] { 1, 0, 2 };
-        int[] tris = new int[listLength * 3];
-        for (var i = 0; i < listLength; i++) {
-            for (var j = 0; j < 3; j++) {
-                var adder = 0;
-                if (i % 2 == 0) {
-                    adder = j;
-                } else {
-                    adder = anticlockwise[j];
-                }
-                tris[3 * i + j] = (i + adder) % listLength;
-            }
-        }
-        return tris;
+    Color DebugColor(int i) {
+    	List<Color> debugColors = new List<Color>();
+        debugColors.Add(Color.red);
+        debugColors.Add(Color.yellow);
+        debugColors.Add(Color.green);
+        debugColors.Add(Color.cyan);
+        debugColors.Add(Color.blue);
+        debugColors.Add(Color.magenta);
+        debugColors.Add(Color.white);
+        debugColors.Add(Color.black);
+
+	    return debugColors[i%debugColors.Count];
     }
+
+    
 
 }

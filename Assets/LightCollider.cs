@@ -9,12 +9,16 @@ public class LightCollider : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        shadow = new GameObject(name + "Shadow");
-        shadow.AddComponent<MeshFilter>();
-        shadow.AddComponent<MeshRenderer>();
-        shadow.AddComponent<MeshCollider>();
-        shadow.GetComponent<MeshRenderer>().material.color = Color.black;
-        shadow.GetComponent<MeshRenderer>().material.shader = Shader.Find("Unlit/Color");
+		if (castsShadow) {
+	        shadow = new GameObject(name + "Shadow");
+	        //shadow.transform.parent = gameObject.transform;
+	        shadow.AddComponent<MeshFilter>();
+	        shadow.AddComponent<MeshRenderer>();
+	        //shadow.AddComponent<MeshCollider>();
+	        shadow.GetComponent<MeshRenderer>().material.color = Color.black;
+	        shadow.GetComponent<MeshRenderer>().material.shader = Shader.Find("Unlit/Color");
+	        //Physics.IgnoreCollision(shadow.GetComponent<Collider>(), gameObject.GetComponent<Collider>());
+	    }
     }
 	
 	// Update is called once per frame
@@ -25,7 +29,7 @@ public class LightCollider : MonoBehaviour {
     public void UpdateMesh(Mesh mesh) {
         shadow.GetComponent<MeshFilter>().mesh.Clear();
         shadow.GetComponent<MeshFilter>().mesh = mesh;
-        shadow.GetComponent<MeshCollider>().sharedMesh = mesh;
+        //shadow.GetComponent<MeshCollider>().sharedMesh = mesh;
 
     }
 
