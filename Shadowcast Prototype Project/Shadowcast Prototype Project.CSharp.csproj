@@ -84,14 +84,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\GoToMouse.cs" />
     <Compile Include="Assets\ProCore\ProBuilder\API Examples\Icosphere FFT\Scripts\CameraControls.cs" />
     <Compile Include="Assets\ProCore\ProBuilder\API Examples\Icosphere FFT\Scripts\IcoBumpin.cs" />
     <Compile Include="Assets\ProCore\ProBuilder\API Examples\Misc\HueCube.cs" />
     <Compile Include="Assets\ProCore\ProBuilder\API Examples\Runtime Editing\RuntimeEdit.cs" />
-    <Compile Include="Assets\drag.cs" />
-    <Compile Include="Assets\raycastForward.cs" />
-    <Compile Include="Assets\triggerButton.cs" />
+    <Compile Include="Assets\Scripts\GoToMouse.cs" />
+    <Compile Include="Assets\Scripts\LightCollider.cs" />
+    <Compile Include="Assets\Scripts\LightSource.cs" />
+    <Compile Include="Assets\Scripts\PickupObject.cs" />
+    <Compile Include="Assets\Scripts\Pickupable.cs" />
+    <Compile Include="Assets\Scripts\raycastForward.cs" />
+    <Compile Include="Assets\Scripts\triggerButton.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\ProCore\ProBuilder\API Examples\Icosphere FFT\README.txt" />

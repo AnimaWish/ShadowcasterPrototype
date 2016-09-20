@@ -8,7 +8,7 @@ public class raycastForward : MonoBehaviour
     GameObject shadow = null;
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 5;
 

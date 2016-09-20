@@ -16,7 +16,7 @@ public class GoToMouse : MonoBehaviour
         target = transform.position;
     }
 
-    void Update()
+    void FixedUpdate()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
