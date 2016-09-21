@@ -8,7 +8,7 @@ public class LightSource : MonoBehaviour
 
     LightCollider[] lightcolliders;
     public int shadowDistance = 20;
-
+    public GameObject cube;
     // Use this for initialization
     void Start()
     {
@@ -16,13 +16,14 @@ public class LightSource : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         foreach (var lightcollider in lightcolliders)
         {
             if (lightcollider.castsShadow)
             {
                 lightcollider.UpdateMesh(GetMeshFromLightCollider(lightcollider));
+                
             }
         }
     }
@@ -38,10 +39,10 @@ public class LightSource : MonoBehaviour
             Ray ray = new Ray(transform.position, (v - transform.position));
             List<RaycastHit> hits = SortAndUnique(Physics.RaycastAll(ray));
 
-            RaycastHit bounce;
-            Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
+           // RaycastHit bounce;
+            //Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
 
-            if (hits.Count > 1 && hits[0].point == v && hits[0].point == bounce.point)
+            if (hits.Count > 1 && hits[0].point == v) // && hits[0].point == bounce.point)
             {
                 newVerts.Add(hits[0].point);
                 newVerts.Add(hits[1].point);

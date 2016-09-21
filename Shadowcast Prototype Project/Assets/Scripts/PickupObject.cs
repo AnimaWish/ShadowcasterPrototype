@@ -71,6 +71,7 @@ public class PickupObject : MonoBehaviour {
 
                         // While carrying, object is unaffected by gravity
                         p.gameObject.GetComponent<Rigidbody>().useGravity = false;
+                        //p.gameObject.GetComponent<Rigidbody>().isKinematic = true;
                     }
                 }
             }
@@ -83,6 +84,7 @@ public class PickupObject : MonoBehaviour {
         {
             carrying = false;
             carriedObject.gameObject.GetComponent<Rigidbody>().useGravity = true;
+            //carriedObject.gameObject.GetComponent<Rigidbody>().isKinematic = false;
             carriedObject = null;
         }
     }

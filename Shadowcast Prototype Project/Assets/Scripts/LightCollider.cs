@@ -7,16 +7,18 @@ public class LightCollider : MonoBehaviour
 
     public GameObject shadow;
     public bool castsShadow;
-
     // Use this for initialization
     void Start()
     {
         shadow = new GameObject(name + "Shadow");
+        shadow.layer = 10;
         shadow.AddComponent<MeshFilter>();
         shadow.AddComponent<MeshRenderer>();
         shadow.AddComponent<MeshCollider>();
         shadow.GetComponent<MeshRenderer>().material.color = Color.black;
         shadow.GetComponent<MeshRenderer>().material.shader = Shader.Find("Unlit/Color");
+        Physics.IgnoreLayerCollision(10, 9);
+        Physics.IgnoreCollision(shadow.GetComponent<Collider>(), GetComponent<Collider>());
     }
 
     // Update is called once per frame
