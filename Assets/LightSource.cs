@@ -6,7 +6,7 @@ using System;
 public class LightSource : MonoBehaviour {
 
 	LightCollider[] lightcolliders;
-	public int shadowDistance = 20;
+	public int shadowDistance = 200000;
 
 	// Use this for initialization
 	void Start () {
@@ -14,7 +14,7 @@ public class LightSource : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void Update () {
         foreach (var lightcollider in lightcolliders) {
             if (lightcollider.castsShadow) {
                 lightcollider.UpdateMesh(GetMeshFromLightCollider(lightcollider));
@@ -32,7 +32,7 @@ public class LightSource : MonoBehaviour {
 
         foreach (var v in lcVerts) {
             Ray ray = new Ray(transform.position, (v - transform.position));
-            List<RaycastHit> hits = SortAndUniqueHits(Physics.RaycastAll(ray));
+            List<RaycastHit> hits = SortAndUniqueHits(Physics.RaycastAll(ray, shadowDistance, ~(1 << 10)));
 
             foreach (var hit in hits) {
             	Debug.DrawRay(transform.position, hit.point - transform.position, DebugColor(color_i));
