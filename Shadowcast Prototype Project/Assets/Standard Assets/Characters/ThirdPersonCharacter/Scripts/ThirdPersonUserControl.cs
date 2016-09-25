@@ -45,23 +45,32 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         // Fixed update is called in sync with physics
         private void FixedUpdate()
         {
+            /*
+             * CADEN: Switched Vertical and Horizontal here
+             */
             // read inputs
-            float h = CrossPlatformInputManager.GetAxis("Horizontal");
-            float v = CrossPlatformInputManager.GetAxis("Vertical");
+            float vert = CrossPlatformInputManager.GetAxis("Vertical"); //("Horizontal"); Vertical
+            float hori = CrossPlatformInputManager.GetAxis("Horizontal"); //("Vertical"); Horizontal
             bool crouch = Input.GetKey(KeyCode.C);
 
+            /*
+             * CADEN: Commented out most of this code to prevent the player moving relative to the camera
+             */
             // calculate move direction to pass to character
-            if (m_Cam != null)
-            {
-                // calculate camera relative direction to move:
-                m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
-                m_Move = v*m_CamForward + h*m_Cam.right;
-            }
-            else
-            {
-                // we use world-relative directions in the case of no main camera
-                m_Move = v*Vector3.forward + h*Vector3.right;
-            }
+            //if (m_Cam != null)
+            //{
+            // calculate camera relative direction to move:
+            //m_CamForward = Vector3.Scale(m_Cam.forward, new Vector3(1, 0, 1)).normalized;
+            //m_Move = v*m_CamForward + h*m_Cam.right;
+            //}
+            //else
+            //{
+            // we use world-relative directions in the case of no main camera
+            /*
+             * CADEN: Changed h*Vector3.right to h*Vector3.left
+             */
+            m_Move = hori*Vector3.forward + vert*Vector3.left;
+            //}
 #if !MOBILE_INPUT
 			// walk speed multiplier
 	        if (Input.GetKey(KeyCode.LeftShift)) m_Move *= 0.5f;

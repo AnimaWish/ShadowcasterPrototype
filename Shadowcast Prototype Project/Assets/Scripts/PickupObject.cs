@@ -79,7 +79,7 @@ public class PickupObject : MonoBehaviour {
 
     private void DropObject()
     {
-        if (Input.GetMouseButtonDown(0)) // On left click
+        if (Input.GetMouseButtonDown(1)) // On left click
         {
             carrying = false;
             carriedObject.gameObject.GetComponent<Rigidbody>().useGravity = true;
