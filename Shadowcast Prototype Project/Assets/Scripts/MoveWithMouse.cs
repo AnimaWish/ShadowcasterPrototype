@@ -24,16 +24,18 @@ public class MoveWithMouse : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Input.GetMouseButtonDown(0) && (Physics.Raycast(ray, out hit, Mathf.Infinity, objectMask) || drag))
+        if (Input.GetMouseButtonDown(0) && Physics.Raycast(ray, out hit, Mathf.Infinity, objectMask) && !drag)
         {
-            if (drag || hit.transform == transform)
+            if (hit.transform == transform)
             {
-                drag = !drag;
-                if (!drag)
-                    gameObject.GetComponent<Rigidbody>().useGravity = true; // used for scroll wheel
-                else
-                    gameObject.GetComponent<Rigidbody>().useGravity = false; // used for scroll wheel
+                drag = true;
+                gameObject.GetComponent<Rigidbody>().useGravity = false; // used for scroll wheel
             }
+        }
+        if (Input.GetMouseButtonDown(1) && drag)
+        {
+            gameObject.GetComponent<Rigidbody>().useGravity = true;
+            drag = false;
         }
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundMask))

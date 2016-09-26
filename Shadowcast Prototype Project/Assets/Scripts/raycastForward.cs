@@ -26,9 +26,20 @@ public class raycastForward : MonoBehaviour
             if (shadow == null)
             {
                 shadow = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                shadow.GetComponent<Renderer>().material.color = Color.black;
+                shadow.GetComponent<Renderer>().material.color = new Color(0, 0, 0, .5f);
                 //shadow.GetComponent<Renderer>().material.color = new Color(0.5f, 1.0f, 1.0f, 0.5f);
                 shadow.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+                var mat = shadow.GetComponent<Renderer>().material;
+                mat.SetFloat("_Mode", 3);
+                mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                mat.SetInt("_ZWrite", 0);
+                mat.DisableKeyword("_ALPHATEST_ON");
+                mat.DisableKeyword("_ALPHABLEND_ON");
+                mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                mat.renderQueue = 3000;
+                shadow.GetComponent<Renderer>().material = mat;
             }
 
             // scale of the shadow is relative to the height and width of the object that you're "hitting" and the length of the shadow is 
