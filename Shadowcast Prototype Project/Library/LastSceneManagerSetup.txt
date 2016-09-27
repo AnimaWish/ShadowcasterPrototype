@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Test Scene 1 Line Shadow_c.unity
+- path: Assets/Scenes/Pitch 2/Pitch 2 Final.unity
   isLoaded: 1
   isActive: 1
