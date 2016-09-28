@@ -38,7 +38,6 @@ public class LightCollider : MonoBehaviour
         shadow.GetComponent<MeshFilter>().mesh.Clear();
         shadow.GetComponent<MeshFilter>().mesh = mesh;
         shadow.GetComponent<MeshCollider>().sharedMesh = mesh;
-
     }
 
     // Returns a list of vertices representing the object in world coordinates
