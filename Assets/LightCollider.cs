@@ -10,7 +10,7 @@ public class LightCollider : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		if (castsShadow) {
-	        shadow = new GameObject(name + "Shadow");
+	        shadow = new GameObject(name + "_Shadow");
 	        //shadow.transform.parent = gameObject.transform;
 	        gameObject.layer = 9;
 	        shadow.layer = 10;

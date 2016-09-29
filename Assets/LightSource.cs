@@ -49,21 +49,20 @@ public class LightSource : MonoBehaviour {
 						endHit = hits[hit_i+1];
 					}
 	            }
-/*
+
             	//"Bounce" the ray back to check if it finds the same point. This ensures that the ray hit an exterior
             	//vertex of the lightcollider, removing troublesome interior points for the shadow mesh
-            	Ray bounceRay = new Ray(endHit.point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)));
-            	//Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
-            	List<RaycastHit> bounceHits = SortAndUniqueHits(Physics.RaycastAll(bounceRay));
+            	// Ray bounceRay = new Ray(endHit.point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)));
+            	// //Physics.Raycast(hits[hits.Count - 1].point, Vector3.Scale(ray.direction, new Vector3(-1, -1, -1)), out bounce);
+            	// List<RaycastHit> bounceHits = SortAndUniqueHits(Physics.RaycastAll(bounceRay));
 
-
-	            bool bounceHitIsFirstHit = false;
-	            foreach (var bhit in bounceHits) {
-	            	if (bhit.point == firstHitOnObject.point) {
-	            		bounceHitIsFirstHit = true;
-	            		break;
-	            	}
-	            }*/
+	            // bool bounceHitIsFirstHit = false;
+	            // foreach (var bhit in bounceHits) {
+	            // 	if (bhit.point == firstHitOnObject.point) {
+	            // 		bounceHitIsFirstHit = true;
+	            // 		break;
+	            // 	}
+	            // }
 
 	            //if (hits.Count > 1 && hits[0].point == v && hits[0].point == bounce.point) {
 	            // if (hits.Count > 1 && hits[0].point == v) {
