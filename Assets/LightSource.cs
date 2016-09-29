@@ -7,6 +7,7 @@ public class LightSource : MonoBehaviour {
 
 	LightCollider[] lightcolliders;
 	public int shadowDistance = 200000;
+	public int lightRadius    = 10;
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +17,8 @@ public class LightSource : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         foreach (var lightcollider in lightcolliders) {
-            if (lightcollider.castsShadow) {
+            if (lightcollider.castsShadow && Vector3.Distance(lightcollider.transform.position, transform.position) < lightRadius) {
+            	Debug.Log(Vector3.Distance(lightcollider.transform.position, transform.position));
                 lightcollider.UpdateMesh(GetMeshFromLightCollider(lightcollider));
             }
         }
