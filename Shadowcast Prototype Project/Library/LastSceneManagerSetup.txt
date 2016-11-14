@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Pitch 2/Pitch 2 Final_A.unity
+- path: Assets/Scenes/Rebuilt/Building_4.unity
   isLoaded: 1
   isActive: 1
